@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>공부</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+
+    --bg:#EEF0EA;
+    --surface:#FFFFFF;
+    --surface-alt:#E4E3D9;
+    --border:#D7D6C9;
+    --ink:#25231C;
+    --ink-muted:#726E5E;
+    --accent:#B8722E;
+    --accent-ink:#FFFFFF;
+    --accent-soft: rgba(184,114,46,0.12);
+    --danger:#A24632;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#14181D;
+      --surface:#1B2028;
+      --surface-alt:#232A34;
+      --border:#2C333E;
+      --ink:#ECE7DA;
+      --ink-muted:#8A93A2;
+      --accent:#E8A23D;
+      --accent-ink:#1B1400;
+      --accent-soft: rgba(232,162,61,0.16);
+      --danger:#E08370;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#14181D;
+    --surface:#1B2028;
+    --surface-alt:#232A34;
+    --border:#2C333E;
+    --ink:#ECE7DA;
+    --ink-muted:#8A93A2;
+    --accent:#E8A23D;
+    --accent-ink:#1B1400;
+    --accent-soft: rgba(232,162,61,0.16);
+    --danger:#E08370;
+  }
+
+  *,*::before,*::after{ box-sizing: inherit; }
+  html{ scroll-padding-top: env(safe-area-inset-top, 0px); }
+  html,body{
+    margin:0; padding:0; min-height:100%;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Noto Sans KR', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+  }
+  body{ padding-bottom: calc(48px + env(safe-area-inset-bottom,0px)); }
+
+  h1,h2,h3{ font-family:'Gowun Batang', serif; margin:0; font-weight:700; }
+  button{ font-family:inherit; }
+  input{ font-family:inherit; }
+
+  .mono{ font-family:'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+
+  .view{ display:none; }
+  .view.active{ display:block; animation: fadein .28s ease; }
+  @media (prefers-reduced-motion: reduce){ .view.active{ animation:none; } }
+  @keyframes fadein{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  .wrap{ max-width: 480px; margin: 0 auto; padding: 0 20px; }
+
+  /* ---------- Home ---------- */
+  #home .hero{
+    padding: calc(36px + env(safe-area-inset-top,0px)) 20px 8px;
+    max-width: 480px; margin:0 auto;
+  }
+  #home .hero .date{
+    color: var(--ink-muted); font-size: 13px; letter-spacing: .02em; margin-bottom: 6px;
+  }
+  #home .hero h1{ font-size: 46px; line-height: 1; color: var(--ink); }
+  #home .hero p{ color: var(--ink-muted); margin-top: 10px; font-size: 14px; max-width: 30ch; }
+
+  .cardlist{ padding: 18px 20px 10px; display:flex; flex-direction:column; gap:10px; }
+  .navcard{
+    display:flex; align-items:center; gap:14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 12px;
+    padding: 16px 16px;
+    text-align:left;
+    cursor:pointer;
+    color: var(--ink);
+  }
+  .navcard .glyph{
+    width: 40px; height:40px; flex:none;
+    display:flex; align-items:center; justify-content:center;
+    font-size: 20px;
+  }
+  .navcard .txt strong{ display:block; font-size:16px; font-weight:700; }
+  .navcard .txt span{ display:block; font-size:12.5px; color:var(--ink-muted); margin-top:2px; }
+
+  /* ---------- Subview header ---------- */
+  .subheader{
+    position: sticky; top: env(safe-area-inset-top, 0px);
+    background: var(--bg);
+    padding: calc(14px + env(safe-area-inset-top,0px)) 20px 12px;
+    display:flex; align-items:center; gap:12px;
+    border-bottom: 1px solid var(--border);
+    z-index: 5;
+  }
+  .backbtn{
+    background:none; border:none; color:var(--ink);
+    font-size: 22px; line-height:1; padding: 4px 6px 4px 0; cursor:pointer;
+  }
+  .subheader h2{ font-size: 20px; }
+  .section{ padding: 22px 20px 40px; max-width:480px; margin:0 auto; }
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    border-radius: 10px; border:1px solid var(--border);
+    background: var(--surface); color: var(--ink);
+    padding: 11px 16px; font-size:14px; font-weight:500; cursor:pointer;
+  }
+  .btn.primary{ background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .btn.ghost{ background:transparent; }
+  .btn.danger{ color: var(--danger); border-color: var(--danger); background:transparent; }
+  .btn:active{ transform: scale(0.98); }
+  .row{ display:flex; gap:10px; }
+
+  /* ---------- Pomodoro ---------- */
+  .timer-face{
+    background: var(--surface); border:1px solid var(--border);
+    border-radius: 20px; padding: 32px 20px 30px; text-align:center; margin-top:6px;
+  }
+  .phase-label{ color: var(--accent); font-size:13px; font-weight:700; letter-spacing:.02em; }
+
+  .clock-ring{
+    width: 232px; height:232px; margin: 16px auto 24px;
+    border-radius: 50%;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: inset 0 0 0 1px var(--border);
+    transition: background .2s linear;
+  }
+  .clock-face{
+    width: 196px; height:196px; border-radius:50%; background: var(--surface);
+    display:flex; align-items:center; justify-content:center; position:relative;
+  }
+  .clock-tick{ position:absolute; background: var(--border); }
+  .clock-tick.t12{ top:10px; left:50%; width:2px; height:12px; transform:translateX(-50%); }
+  .clock-tick.t6{ bottom:10px; left:50%; width:2px; height:12px; transform:translateX(-50%); }
+  .clock-tick.t3{ right:10px; top:50%; width:12px; height:2px; transform:translateY(-50%); }
+  .clock-tick.t9{ left:10px; top:50%; width:12px; height:2px; transform:translateY(-50%); }
+  .timer-display{ font-size: 40px; }
+
+  .timer-controls{ display:flex; gap:10px; justify-content:center; }
+  .timer-controls .btn{ min-width: 108px; }
+
+  .settings-box{
+    margin-top: 22px; background: var(--surface); border:1px solid var(--border);
+    border-radius: 16px; padding: 18px 18px 16px;
+  }
+  .settings-box h3{ font-size:14px; margin-bottom:12px; }
+  .field-row{ display:flex; align-items:center; gap:8px; margin-bottom:10px; flex-wrap:wrap; }
+  .field-row label{ font-size:13px; color:var(--ink-muted); width:64px; flex:none; }
+  .numfield{ display:flex; align-items:center; gap:6px; }
+  .numfield input{
+    width: 54px; padding:8px 6px; text-align:center; border-radius:8px;
+    border:1px solid var(--border); background:var(--surface-alt); color:var(--ink); font-size:14px;
+  }
+  .numfield span{ font-size:12.5px; color:var(--ink-muted); }
+  .apply-row{ margin-top: 6px; }
+
+  /* ---------- Tracker ---------- */
+  .subject-row{
+    display:flex; align-items:center; gap:10px;
+    background: var(--surface); border:1px solid var(--border);
+    border-radius: 12px; padding: 12px 14px; margin-bottom: 10px;
+  }
+  .subject-row .name{ flex:1; min-width:0; font-size:14.5px; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .subject-row .name.running{ color: var(--accent); }
+  .subject-row .time{ font-size: 16px; min-width: 84px; text-align:right; }
+  .iconbtn{
+    border:none; background:transparent; cursor:pointer; font-size:17px;
+    width:34px; height:34px; flex:none; border-radius:8px; color:var(--ink);
+  }
+  .iconbtn.play{ color: var(--accent); }
+  .iconbtn.del{ color: var(--ink-muted); font-size:15px; }
+  .addform{ display:flex; gap:8px; margin-top: 4px; }
+  .addform input{
+    flex:1; padding:11px 12px; border-radius:10px; border:1px solid var(--border);
+    background:var(--surface); color:var(--ink); font-size:14px;
+  }
+  .empty-hint{ color: var(--ink-muted); font-size:13.5px; padding: 10px 2px 18px; line-height:1.6; }
+
+  /* ---------- Playlist / Apps ---------- */
+  .linklist{ display:flex; flex-direction:column; gap:9px; }
+  .linkrow{
+    display:flex; align-items:center; gap:12px;
+    background: var(--surface); border:1px solid var(--border);
+    border-radius: 12px; padding: 14px 16px; text-decoration:none; color: var(--ink);
+  }
+  .linkrow .dot{ width:8px; height:8px; border-radius:50%; background: var(--accent); flex:none; }
+  .linkrow .lbl{ font-size:15px; font-weight:500; flex:1; }
+  .linkrow .url{ font-size:12px; color:var(--ink-muted); }
+
+  .app-row{
+    display:flex; align-items:center; gap:10px;
+    background: var(--surface); border:1px solid var(--border);
+    border-radius: 12px; padding: 6px 6px 6px 16px; margin-bottom:9px;
+  }
+  .app-row a{ flex:1; min-width:0; text-decoration:none; color:var(--ink); padding:9px 0; }
+  .app-row a .lbl{ display:block; font-size:14.5px; font-weight:500; }
+  .app-row a .url{ display:block; font-size:11.5px; color:var(--ink-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+  .addapp-box{
+    background: var(--surface-alt); border:1px dashed var(--border);
+    border-radius:12px; padding:14px; margin-top:6px;
+  }
+  .addapp-box input{
+    width:100%; padding:10px 12px; margin-bottom:8px; border-radius:9px;
+    border:1px solid var(--border); background:var(--surface); color:var(--ink); font-size:14px;
+  }
+
+  /* ---------- Quotes ---------- */
+  .quote-card{
+    background: var(--surface); border:1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 16px; padding: 32px 22px; margin-top: 8px; min-height: 160px;
+    display:flex; align-items:center;
+  }
+  .quote-card p{
+    font-family:'Gowun Batang', serif; font-size: 20px; line-height:1.6; color: var(--ink); margin:0;
+  }
+  .quote-actions{ margin-top: 18px; display:flex; justify-content:space-between; gap:10px; }
+  .quote-form{ margin-top:14px; display:none; }
+  .quote-form.active{ display:block; }
+  .quote-form textarea{
+    width:100%; min-height:72px; padding:12px; border-radius:10px; resize:vertical;
+    border:1px solid var(--border); background:var(--surface); color:var(--ink); font-size:14px; font-family:inherit;
+  }
+  .quote-form .apply-row{ margin-top:8px; display:flex; justify-content:flex-end; }
+  .cq-row{
+    display:flex; align-items:center; gap:10px;
+    background: var(--surface-alt); border:1px solid var(--border);
+    border-radius: 10px; padding: 10px 12px; margin-bottom: 8px;
+  }
+  .cq-row .txt{ flex:1; font-size:13.5px; color:var(--ink); }
+
+  /* ---------- Hero top row / exit ---------- */
+  .hero-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+  .exitbtn{
+    background:none; border:1px solid var(--border); border-radius:10px;
+    width:36px; height:36px; flex:none; color:var(--ink-muted); font-size:16px; cursor:pointer; margin-top:2px;
+  }
+  .subtitle-sm{ font-size:12.5px; color:var(--ink-muted); margin-top:6px; }
+
+  /* ---------- Modal ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,0.45); display:none;
+    align-items:center; justify-content:center; z-index:50; padding:20px;
+  }
+  .modal-overlay.active{ display:flex; }
+  .modal-box{
+    background:var(--surface); border:1px solid var(--border); border-radius:16px;
+    padding:24px 20px; max-width:340px; width:100%;
+  }
+  .modal-box h3{ font-size:17px; margin-bottom:10px; }
+  .modal-box .record-line{ font-family:'JetBrains Mono',monospace; font-size:15px; color:var(--accent); margin-bottom:18px; }
+  .modal-actions{ display:flex; gap:10px; justify-content:flex-end; }
+
+  /* ---------- Todo ---------- */
+  .todo-row{
+    display:flex; align-items:center; gap:10px;
+    background: var(--surface); border:1px solid var(--border);
+    border-radius: 12px; padding: 12px 14px; margin-bottom: 9px;
+  }
+  .todo-row .check{
+    width:20px; height:20px; border:1.5px solid var(--border); border-radius:6px; flex:none;
+    cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; color:var(--accent);
+  }
+  .todo-row .text{ flex:1; font-size:14.5px; }
+  .todo-row .text.done{ text-decoration:line-through; color:var(--ink-muted); }
+
+  /* ---------- Record / alarm helper ---------- */
+  .select-field{
+    padding:8px 10px; border-radius:8px; border:1px solid var(--border);
+    background:var(--surface-alt); color:var(--ink); font-size:13.5px;
+  }
+  .wide-input{
+    width:100%; padding:11px 12px; border-radius:9px; border:1px solid var(--border);
+    background:var(--surface-alt); color:var(--ink); font-size:14px; margin-bottom:10px;
+  }
+  .small-note{ font-size:12.5px; color:var(--ink-muted); margin:-4px 0 10px; line-height:1.5; }
+</style>
+</head>
+<body>
+
+<!-- ============ HOME ============ -->
+<div id="home" class="view active">
+  <div class="hero">
+    <div class="hero-top">
+      <div>
+        <div class="date" id="todayDate"></div>
+        <h1>공부</h1>
+      </div>
+      <button class="exitbtn" onclick="openExitModal()" aria-label="종료">⏻</button>
+    </div>
+    <p>탭 한 번으로 오늘의 공부를 시작하세요.</p>
+  </div>
+  <div class="cardlist">
+    <button class="navcard" onclick="showView('pomodoro')">
+      <div class="glyph">⏱</div>
+      <div class="txt"><strong>뽀모도로 타이머</strong><span>집중 시간과 휴식 시간을 설정해서 반복</span></div>
+    </button>
+    <button class="navcard" onclick="showView('tracker')">
+      <div class="glyph">📖</div>
+      <div class="txt"><strong>순공 타이머</strong><span>과목별로 실제 공부한 시간을 기록</span></div>
+    </button>
+    <button class="navcard" onclick="showView('playlist')">
+      <div class="glyph">🎧</div>
+      <div class="txt"><strong>공부 플리</strong><span>자주 쓰는 음악 앱으로 바로 이동</span></div>
+    </button>
+    <button class="navcard" onclick="showView('apps')">
+      <div class="glyph">🔗</div>
+      <div class="txt"><strong>공부 어플</strong><span>내가 자주 쓰는 앱·사이트 모음</span></div>
+    </button>
+    <button class="navcard" onclick="showView('quotes')">
+      <div class="glyph">✎</div>
+      <div class="txt"><strong>공부 자극 명언</strong><span>오늘의 한마디</span></div>
+    </button>
+    <button class="navcard" onclick="showView('todo')">
+      <div class="glyph">✓</div>
+      <div class="txt"><strong>To Do List</strong><span>오늘 할 일을 정리해보세요</span></div>
+    </button>
+  </div>
+</div>
+
+<!-- ============ POMODORO ============ -->
+<div id="pomodoro" class="view">
+  <div class="subheader">
+    <button class="backbtn" onclick="showView('home')" aria-label="뒤로">←</button>
+    <h2>뽀모도로 타이머</h2>
+  </div>
+  <div class="section">
+    <div class="timer-face">
+      <div class="phase-label" id="phaseLabel">공부하기</div>
+      <div class="clock-ring" id="clockRing">
+        <div class="clock-face">
+          <div class="clock-tick t12"></div>
+          <div class="clock-tick t3"></div>
+          <div class="clock-tick t6"></div>
+          <div class="clock-tick t9"></div>
+          <div class="timer-display mono" id="timerDisplay">25:00</div>
+        </div>
+      </div>
+      <div class="timer-controls">
+        <button class="btn primary" id="startPauseBtn" onclick="togglePomodoro()">시작</button>
+        <button class="btn ghost" onclick="resetPomodoro()">초기화</button>
+      </div>
+    </div>
+
+    <div class="settings-box">
+      <h3>몇 시간 몇 분 몇 초 공부할까요?</h3>
+      <div class="field-row">
+        <label>공부 시간</label>
+        <div class="numfield"><input type="number" id="studyH" min="0" max="23" value="0"><span>시간</span></div>
+        <div class="numfield"><input type="number" id="studyM" min="0" max="59" value="25"><span>분</span></div>
+        <div class="numfield"><input type="number" id="studyS" min="0" max="59" value="0"><span>초</span></div>
+      </div>
+      <div class="field-row">
+        <label>휴식 시간</label>
+        <div class="numfield"><input type="number" id="breakM" min="0" max="59" value="5"><span>분</span></div>
+      </div>
+      <div class="apply-row">
+        <button class="btn" onclick="applyPomodoroSettings()">이 시간으로 설정</button>
+      </div>
+    </div>
+
+    <div class="settings-box">
+      <h3>공부 시간이 끝나면 어떤 소리로 알려드릴까요?</h3>
+      <div class="field-row" style="align-items:flex-start;">
+        <label>알람음</label>
+        <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
+          <select id="alarmType" class="select-field" onchange="onAlarmTypeChange()">
+            <option value="default">기본음</option>
+            <option value="chime">차임벨</option>
+            <option value="long">긴 알림음</option>
+            <option value="custom">내 파일 업로드</option>
+          </select>
+          <input type="file" id="alarmFile" accept="audio/*" style="display:none;" onchange="onAlarmFileChange(event)">
+          <button class="btn ghost" type="button" onclick="previewAlarm()" style="align-self:flex-start;">미리듣기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TRACKER ============ -->
+<div id="tracker" class="view">
+  <div class="subheader">
+    <button class="backbtn" onclick="showView('home')" aria-label="뒤로">←</button>
+    <h2>순공 타이머</h2>
+  </div>
+  <div class="section">
+    <div id="subjectList"></div>
+    <div id="subjectEmptyHint" class="empty-hint">아직 등록한 과목이 없어요. 아래에서 과목을 추가해보세요.</div>
+    <div class="addform">
+      <input type="text" id="newSubjectName" placeholder="과목 이름 (예: 수학)" maxlength="20">
+      <button class="btn primary" onclick="addSubject()">추가</button>
+    </div>
+
+    <div class="settings-box" style="margin-top:22px;">
+      <h3>오늘의 기록 메일로 보내기</h3>
+      <p class="small-note">받는 사람 메일 주소를 입력하면 메일 작성 화면이 열려요. 내용을 확인하고 직접 보내시면 됩니다.</p>
+      <input type="email" id="recordEmail" class="wide-input" placeholder="example@gmail.com">
+      <button class="btn primary" style="width:100%;" onclick="sendRecordEmail()">메일로 보내기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PLAYLIST ============ -->
+<div id="playlist" class="view">
+  <div class="subheader">
+    <button class="backbtn" onclick="showView('home')" aria-label="뒤로">←</button>
+    <h2>공부 플리</h2>
+  </div>
+  <div class="section">
+    <div class="linklist">
+      <a class="linkrow" href="https://music.youtube.com" target="_blank" rel="noopener"><span class="dot"></span><span class="lbl">유튜브 뮤직</span><span class="url">music.youtube.com</span></a>
+      <a class="linkrow" href="https://www.youtube.com" target="_blank" rel="noopener"><span class="dot"></span><span class="lbl">유튜브</span><span class="url">youtube.com</span></a>
+      <a class="linkrow" href="https://open.spotify.com" target="_blank" rel="noopener"><span class="dot"></span><span class="lbl">스포티파이</span><span class="url">open.spotify.com</span></a>
+      <a class="linkrow" href="https://music.apple.com" target="_blank" rel="noopener"><span class="dot"></span><span class="lbl">애플 뮤직</span><span class="url">music.apple.com</span></a>
+      <a class="linkrow" href="https://www.melon.com" target="_blank" rel="noopener"><span class="dot"></span><span class="lbl">멜론</span><span class="url">melon.com</span></a>
+      <a class="linkrow" href="https://www.genie.co.kr" target="_blank" rel="noopener"><span class="dot"></span><span class="lbl">지니뮤직</span><span class="url">genie.co.kr</span></a>
+    </div>
+  </div>
+</div>
+
+<!-- ============ APPS ============ -->
+<div id="apps" class="view">
+  <div class="subheader">
+    <button class="backbtn" onclick="showView('home')" aria-label="뒤로">←</button>
+    <h2>공부 어플</h2>
+  </div>
+  <div class="section">
+    <div id="appList"></div>
+    <div id="appEmptyHint" class="empty-hint">자주 쓰는 앱이나 사이트 링크를 추가해두면 다음에 바로 열 수 있어요.</div>
+    <div class="addapp-box">
+      <input type="text" id="newAppName" placeholder="이름 (예: 노션, e학습터)" maxlength="20">
+      <input type="text" id="newAppUrl" placeholder="주소 (예: notion.so)" maxlength="200">
+      <button class="btn primary" onclick="addApp()" style="width:100%;">추가하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ QUOTES ============ -->
+<div id="quotes" class="view">
+  <div class="subheader">
+    <button class="backbtn" onclick="showView('home')" aria-label="뒤로">←</button>
+    <h2>공부 자극 명언</h2>
+  </div>
+  <div class="section">
+    <div class="quote-card"><p id="quoteText"></p></div>
+    <div class="quote-actions">
+      <button class="btn primary" onclick="nextQuote()">다른 명언 보기</button>
+      <button class="btn ghost" onclick="toggleQuoteForm()">명언 작성/적용하기</button>
+    </div>
+    <div class="quote-form" id="quoteForm">
+      <textarea id="customQuoteText" placeholder="나만의 명언을 적어보세요" maxlength="120"></textarea>
+      <div class="apply-row">
+        <button class="btn primary" onclick="applyCustomQuote()">적용하기</button>
+      </div>
+    </div>
+
+    <div class="settings-box" style="margin-top:20px;">
+      <h3>내가 쓴 명언</h3>
+      <div id="customQuoteList"></div>
+      <div id="customQuoteEmptyHint" class="empty-hint" style="padding:2px 0 0;">아직 직접 쓴 명언이 없어요.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TODO ============ -->
+<div id="todo" class="view">
+  <div class="subheader">
+    <button class="backbtn" onclick="showView('home')" aria-label="뒤로">←</button>
+  </div>
+  <div class="hero" style="padding-top:18px;">
+    <h1>To Do List</h1>
+    <p class="subtitle-sm">하루 일정을 적어보세요</p>
+  </div>
+  <div class="section" style="padding-top:0;">
+    <div id="todoList"></div>
+    <div id="todoEmptyHint" class="empty-hint">아직 추가한 일정이 없어요.</div>
+    <div class="addform">
+      <input type="text" id="newTodoText" placeholder="오늘 할 일을 입력하세요" maxlength="60">
+      <button class="btn primary" onclick="addTodo()">추가</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ EXIT MODAL ============ -->
+<div class="modal-overlay" id="exitModal">
+  <div class="modal-box">
+    <h3>정말 종료하시겠습니까?</h3>
+    <div class="record-line" id="exitRecordLine">자신의 공부 기록: 0시 0분 0초</div>
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeExitModal()">취소</button>
+      <button class="btn primary" onclick="confirmExit()">종료하기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------------- Storage ---------------- */
+const STORE_KEY = 'study-hub-v1';
+function defaultStore(){
+  return {
+    subjects: [], apps: [], todos: [], customQuotes: [],
+    pomodoro: { studySec: 1500, breakSec: 300, alarmType: 'default', customAlarmData: null }
+  };
+}
+function loadStore(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(!raw) return defaultStore();
+    const parsed = JSON.parse(raw);
+    const d = defaultStore();
+    parsed.subjects = parsed.subjects || [];
+    parsed.apps = parsed.apps || [];
+    parsed.todos = parsed.todos || [];
+    parsed.customQuotes = (parsed.customQuotes || []).map(q =>
+      typeof q === 'string' ? { id: uid(), text: q } : q
+    );
+    parsed.pomodoro = Object.assign(d.pomodoro, parsed.pomodoro || {});
+    return parsed;
+  }catch(e){
+    return defaultStore();
+  }
+}
+function saveStore(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(store)); }catch(e){ /* storage unavailable, continue in-memory */ }
+}
+let store = loadStore();
+
+/* ---------------- Navigation ---------------- */
+function showView(id){
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+/* ---------------- Home date ---------------- */
+(function initDate(){
+  const days = ['일','월','화','수','목','금','토'];
+  const d = new Date();
+  document.getElementById('todayDate').textContent =
+    `${d.getFullYear()}. ${d.getMonth()+1}. ${d.getDate()}. ${days[d.getDay()]}요일`;
+})();
+
+/* ---------------- Pomodoro ---------------- */
+let pState = {
+  phase: 'study',
+  remaining: store.pomodoro.studySec,
+  running: false,
+  intervalId: null
+};
+
+function fmtTime(totalSec){
+  totalSec = Math.max(0, Math.round(totalSec));
+  const h = Math.floor(totalSec/3600);
+  const m = Math.floor((totalSec%3600)/60);
+  const s = totalSec%60;
+  if(h > 0){
+    return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  }
+  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+function renderPomodoro(){
+  document.getElementById('timerDisplay').textContent = fmtTime(pState.remaining);
+  document.getElementById('phaseLabel').textContent = pState.phase === 'study' ? '공부하기' : '휴식하기';
+  document.getElementById('startPauseBtn').textContent = pState.running ? '일시정지' : (pState.remaining === (pState.phase==='study'?store.pomodoro.studySec:store.pomodoro.breakSec) ? '시작' : '이어하기');
+
+  const total = pState.phase === 'study' ? store.pomodoro.studySec : store.pomodoro.breakSec;
+  const frac = total > 0 ? Math.max(0, Math.min(1, pState.remaining / total)) : 0;
+  const deg = frac * 360;
+  document.getElementById('clockRing').style.background =
+    `conic-gradient(var(--accent) 0deg ${deg}deg, var(--surface-alt) ${deg}deg 360deg)`;
+}
+
+function playTone(freq, times, dur){
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const now = ctx.currentTime;
+    for(let i=0;i<times;i++){
+      const offset = i * (dur + 0.12);
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, now+offset);
+      gain.gain.exponentialRampToValueAtTime(0.22, now+offset+0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now+offset+dur);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now+offset);
+      osc.stop(now+offset+dur+0.02);
+    }
+  }catch(e){ /* audio unavailable */ }
+}
+
+let customAlarmObjectUrl = null; // session-only fallback if the file was too large to save
+
+function playAlarm(){
+  const type = store.pomodoro.alarmType || 'default';
+  if(type === 'custom'){
+    const src = store.pomodoro.customAlarmData || customAlarmObjectUrl;
+    if(src){
+      try{ new Audio(src).play(); return; }catch(e){ /* fall through to default tone */ }
+    }
+    playTone(880, 3, 0.18);
+    return;
+  }
+  if(type === 'chime'){ playTone(1046, 2, 0.3); return; }
+  if(type === 'long'){ playTone(660, 1, 1.1); return; }
+  playTone(880, 3, 0.18); // default
+}
+function previewAlarm(){ playAlarm(); }
+
+function onAlarmTypeChange(){
+  const type = document.getElementById('alarmType').value;
+  store.pomodoro.alarmType = type;
+  document.getElementById('alarmFile').style.display = type === 'custom' ? 'block' : 'none';
+  saveStore();
+}
+
+function onAlarmFileChange(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  customAlarmObjectUrl = URL.createObjectURL(file);
+  const reader = new FileReader();
+  reader.onload = function(ev){
+    store.pomodoro.customAlarmData = ev.target.result;
+    saveStore(); // if the file is too large for localStorage this silently keeps the session-only URL instead
+  };
+  reader.readAsDataURL(file);
+}
+
+function tickPomodoro(){
+  pState.remaining -= 1;
+  if(pState.remaining <= 0){
+    playAlarm();
+    pState.phase = pState.phase === 'study' ? 'break' : 'study';
+    pState.remaining = pState.phase === 'study' ? store.pomodoro.studySec : store.pomodoro.breakSec;
+  }
+  renderPomodoro();
+}
+
+function togglePomodoro(){
+  if(pState.running){
+    pState.running = false;
+    clearInterval(pState.intervalId);
+  } else {
+    if(pState.remaining <= 0){
+      pState.remaining = pState.phase === 'study' ? store.pomodoro.studySec : store.pomodoro.breakSec;
+    }
+    pState.running = true;
+    pState.intervalId = setInterval(tickPomodoro, 1000);
+  }
+  renderPomodoro();
+}
+
+function resetPomodoro(){
+  clearInterval(pState.intervalId);
+  pState.running = false;
+  pState.phase = 'study';
+  pState.remaining = store.pomodoro.studySec;
+  renderPomodoro();
+}
+
+function applyPomodoroSettings(){
+  const h = parseInt(document.getElementById('studyH').value, 10) || 0;
+  const m = parseInt(document.getElementById('studyM').value, 10) || 0;
+  const s = parseInt(document.getElementById('studyS').value, 10) || 0;
+  const bm = parseInt(document.getElementById('breakM').value, 10) || 0;
+  const studySec = Math.max(1, h*3600 + m*60 + s);
+  const breakSec = Math.max(0, bm*60);
+  store.pomodoro.studySec = studySec;
+  store.pomodoro.breakSec = breakSec;
+  saveStore();
+  resetPomodoro();
+}
+
+renderPomodoro();
+(function initAlarmUI(){
+  document.getElementById('alarmType').value = store.pomodoro.alarmType || 'default';
+  document.getElementById('alarmFile').style.display = (store.pomodoro.alarmType === 'custom') ? 'block' : 'none';
+})();
+
+/* ---------------- 순공 타이머 (subject tracker) ---------------- */
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+function subjectElapsed(subj){
+  let sec = subj.seconds || 0;
+  if(subj.running && subj.startedAt){
+    sec += (Date.now() - subj.startedAt) / 1000;
+  }
+  return sec;
+}
+
+function renderSubjects(){
+  const list = document.getElementById('subjectList');
+  const hint = document.getElementById('subjectEmptyHint');
+  list.innerHTML = '';
+  hint.style.display = store.subjects.length ? 'none' : 'block';
+  store.subjects.forEach(subj=>{
+    const row = document.createElement('div');
+    row.className = 'subject-row';
+    row.innerHTML = `
+      <span class="name ${subj.running ? 'running' : ''}">${escapeHtml(subj.name)}</span>
+      <span class="time mono" data-id="${subj.id}">${fmtTime(subjectElapsed(subj))}</span>
+      <button class="iconbtn ${subj.running ? '' : 'play'}" onclick="toggleSubject('${subj.id}')">${subj.running ? '⏸' : '▶'}</button>
+      <button class="iconbtn del" onclick="deleteSubject('${subj.id}')">✕</button>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+function addSubject(){
+  const input = document.getElementById('newSubjectName');
+  const name = input.value.trim();
+  if(!name) return;
+  store.subjects.push({ id: uid(), name, seconds: 0, running: false, startedAt: null });
+  input.value = '';
+  saveStore();
+  renderSubjects();
+}
+
+function toggleSubject(id){
+  store.subjects.forEach(s=>{
+    if(s.id === id){
+      if(s.running){
+        s.seconds = subjectElapsed(s);
+        s.running = false;
+        s.startedAt = null;
+      } else {
+        s.running = true;
+        s.startedAt = Date.now();
+      }
+    } else if(s.running){
+      // only one subject runs at a time
+      s.seconds = subjectElapsed(s);
+      s.running = false;
+      s.startedAt = null;
+    }
+  });
+  saveStore();
+  renderSubjects();
+}
+
+function deleteSubject(id){
+  store.subjects = store.subjects.filter(s => s.id !== id);
+  saveStore();
+  renderSubjects();
+}
+
+renderSubjects();
+setInterval(()=>{
+  if(store.subjects.some(s=>s.running)){
+    document.querySelectorAll('#subjectList .time').forEach(el=>{
+      const subj = store.subjects.find(s=>s.id === el.dataset.id);
+      if(subj) el.textContent = fmtTime(subjectElapsed(subj));
+    });
+  }
+}, 1000);
+
+/* ---------------- 공부 어플 ---------------- */
+function normalizeUrl(url){
+  url = url.trim();
+  if(!/^https?:\/\//i.test(url)) url = 'https://' + url;
+  return url;
+}
+
+function renderApps(){
+  const list = document.getElementById('appList');
+  const hint = document.getElementById('appEmptyHint');
+  list.innerHTML = '';
+  hint.style.display = store.apps.length ? 'none' : 'block';
+  store.apps.forEach(app=>{
+    const row = document.createElement('div');
+    row.className = 'app-row';
+    row.innerHTML = `
+      <a href="${app.url}" target="_blank" rel="noopener">
+        <span class="lbl">${escapeHtml(app.name)}</span>
+        <span class="url">${escapeHtml(app.url)}</span>
+      </a>
+      <button class="iconbtn del" onclick="deleteApp('${app.id}')">✕</button>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function addApp(){
+  const nameInput = document.getElementById('newAppName');
+  const urlInput = document.getElementById('newAppUrl');
+  const name = nameInput.value.trim();
+  const url = urlInput.value.trim();
+  if(!name || !url) return;
+  store.apps.push({ id: uid(), name, url: normalizeUrl(url) });
+  nameInput.value = '';
+  urlInput.value = '';
+  saveStore();
+  renderApps();
+}
+
+function deleteApp(id){
+  store.apps = store.apps.filter(a => a.id !== id);
+  saveStore();
+  renderApps();
+}
+
+renderApps();
+
+/* ---------------- 공부 자극 명언 ---------------- */
+const QUOTES = [
+  '지금 공부 안 하면 나중에 하고 싶은 일을 못 하는 게 아니라, 하고 싶지 않은 일을 해야 한다.',
+  '피할 수 없다면 즐기는 게 아니라, 빨리 끝내버려야 한다.',
+  '내가 쉬고 있는 지금 이 순간에도 경쟁자의 페이지는 넘어가고 있다.',
+  '"내일부터 해야지"라는 말은 "안 하겠다"는 말의 다른 표현이다.',
+  '오늘 흘린 땀은 내일의 기쁨이 되고, 오늘 흘린 눈물은 미래의 피눈물이 된다.',
+  '대학 간판이 인생의 전부는 아니지만, 내 노력의 첫 번째 증명서다.',
+  '졸릴 때 자면 꿈을 꾸지만, 안 자고 공부하면 꿈을 이룬다.',
+  '내 미래의 모습은 오늘 내가 보낸 시간에 의해 결정된다.',
+  '"이 정도면 됐겠지"라고 생각할 때가 가장 위험할 때다.',
+  '포기하고 싶을 때, 내가 왜 시작했는지 기억하라.'
+];
+let lastQuoteIdx = -1;
+function getAllQuotes(){ return QUOTES.concat((store.customQuotes || []).map(q => q.text)); }
+function nextQuote(){
+  const all = getAllQuotes();
+  let idx;
+  do{ idx = Math.floor(Math.random()*all.length); }while(idx === lastQuoteIdx && all.length > 1);
+  lastQuoteIdx = idx;
+  document.getElementById('quoteText').textContent = all[idx];
+}
+function toggleQuoteForm(){
+  document.getElementById('quoteForm').classList.toggle('active');
+}
+function applyCustomQuote(){
+  const ta = document.getElementById('customQuoteText');
+  const text = ta.value.trim();
+  if(!text) return;
+  store.customQuotes = store.customQuotes || [];
+  store.customQuotes.push({ id: uid(), text });
+  saveStore();
+  ta.value = '';
+  document.getElementById('quoteForm').classList.remove('active');
+  document.getElementById('quoteText').textContent = text;
+  lastQuoteIdx = getAllQuotes().length - 1;
+  renderCustomQuoteList();
+}
+function renderCustomQuoteList(){
+  const list = document.getElementById('customQuoteList');
+  const hint = document.getElementById('customQuoteEmptyHint');
+  const quotes = store.customQuotes || [];
+  list.innerHTML = '';
+  hint.style.display = quotes.length ? 'none' : 'block';
+  quotes.forEach(q=>{
+    const row = document.createElement('div');
+    row.className = 'cq-row';
+    row.innerHTML = `
+      <span class="txt">${escapeHtml(q.text)}</span>
+      <button class="iconbtn del" onclick="deleteCustomQuote('${q.id}')">✕</button>
+    `;
+    list.appendChild(row);
+  });
+}
+function deleteCustomQuote(id){
+  store.customQuotes = (store.customQuotes || []).filter(q => q.id !== id);
+  saveStore();
+  renderCustomQuoteList();
+}
+nextQuote();
+renderCustomQuoteList();
+
+/* ---------------- 공부 기록 / 메일 보내기 ---------------- */
+function getTotalRecordSeconds(){
+  return store.subjects.reduce((sum, s) => sum + subjectElapsed(s), 0);
+}
+function formatRecordKorean(totalSec){
+  totalSec = Math.max(0, Math.round(totalSec));
+  const h = Math.floor(totalSec/3600);
+  const m = Math.floor((totalSec%3600)/60);
+  const s = totalSec%60;
+  return `${h}시 ${m}분 ${s}초`;
+}
+function sendRecordEmail(){
+  const emailInput = document.getElementById('recordEmail');
+  const email = emailInput.value.trim();
+  if(!email) return;
+  let body = '오늘의 공부 기록\n\n';
+  if(store.subjects.length){
+    store.subjects.forEach(s=>{
+      body += `- ${s.name}: ${formatRecordKorean(subjectElapsed(s))}\n`;
+    });
+    body += '\n';
+  }
+  body += `총 공부 시간: ${formatRecordKorean(getTotalRecordSeconds())}`;
+  const mailto = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent('오늘의 공부 기록')}&body=${encodeURIComponent(body)}`;
+  window.location.href = mailto;
+}
+
+/* ---------------- 종료 확인 ---------------- */
+function openExitModal(){
+  document.getElementById('exitRecordLine').textContent =
+    `자신의 공부 기록: ${formatRecordKorean(getTotalRecordSeconds())}`;
+  document.getElementById('exitModal').classList.add('active');
+}
+function closeExitModal(){
+  document.getElementById('exitModal').classList.remove('active');
+}
+function confirmExit(){
+  closeExitModal();
+  window.close(); // 브라우저 정책상 스크립트로 열리지 않은 탭은 닫히지 않을 수 있습니다
+}
+window.addEventListener('beforeunload', function(e){
+  e.preventDefault();
+  e.returnValue = '';
+});
+
+/* ---------------- To Do List ---------------- */
+function renderTodos(){
+  const list = document.getElementById('todoList');
+  const hint = document.getElementById('todoEmptyHint');
+  list.innerHTML = '';
+  hint.style.display = (store.todos || []).length ? 'none' : 'block';
+  (store.todos || []).forEach(t=>{
+    const row = document.createElement('div');
+    row.className = 'todo-row';
+    row.innerHTML = `
+      <span class="check" onclick="toggleTodo('${t.id}')">${t.done ? '✓' : ''}</span>
+      <span class="text ${t.done ? 'done' : ''}">${escapeHtml(t.text)}</span>
+      <button class="iconbtn del" onclick="deleteTodo('${t.id}')">✕</button>
+    `;
+    list.appendChild(row);
+  });
+}
+function addTodo(){
+  const input = document.getElementById('newTodoText');
+  const text = input.value.trim();
+  if(!text) return;
+  store.todos = store.todos || [];
+  store.todos.push({ id: uid(), text, done: false });
+  input.value = '';
+  saveStore();
+  renderTodos();
+}
+function toggleTodo(id){
+  (store.todos || []).forEach(t=>{ if(t.id === id) t.done = !t.done; });
+  saveStore();
+  renderTodos();
+}
+function deleteTodo(id){
+  store.todos = (store.todos || []).filter(t => t.id !== id);
+  saveStore();
+  renderTodos();
+}
+renderTodos();
+</script>
+</body>
+</html>
